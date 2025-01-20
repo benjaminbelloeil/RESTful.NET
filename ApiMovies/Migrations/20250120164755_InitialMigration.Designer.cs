@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiMovies.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250120160050_InitialMigrationV2")]
-    partial class InitialMigrationV2
+    [Migration("20250120164755_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,7 @@ namespace ApiMovies.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categoria");
                 });
 #pragma warning restore 612, 618
         }

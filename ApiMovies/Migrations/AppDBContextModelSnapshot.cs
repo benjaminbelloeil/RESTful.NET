@@ -39,7 +39,7 @@ namespace ApiMovies.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categoria");
                 });
 #pragma warning restore 612, 618
         }

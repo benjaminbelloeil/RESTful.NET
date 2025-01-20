@@ -9,5 +9,5 @@ public class AppDBContext: DbContext
     {
     }
     //Aqui pasar todas la entidades (modelos)
-    public DbSet<Categoria> Categorias { get; set; }
+    public DbSet<Categoria> Categoria { get; set; }
 }
