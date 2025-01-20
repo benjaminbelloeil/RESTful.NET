@@ -24,7 +24,6 @@
     <ItemGroup>
       <Folder Include="Models\Dtos\" />
       <Folder Include="MovieMapper\" />
-      <Folder Include="Repository\IRepository\" />
     </ItemGroup>
 
 </Project>
