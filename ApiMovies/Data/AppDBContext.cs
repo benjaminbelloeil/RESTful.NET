@@ -1,6 +1,13 @@
+using ApiMovies.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace ApiMovies.Data;
 
-public class AppDBContext
+public class AppDBContext: DbContext
 {
-    
+    public AppDBContext(DbContextOptions<AppDBContext> options): base(options)
+    {
+    }
+    //Aqui pasar todas la entidades (modelos)
+    public DbSet<Categoria> Categorias { get; set; }
 }
