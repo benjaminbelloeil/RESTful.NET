@@ -45,6 +45,15 @@ public class CategoriaRepositorio: ICategoriaRepositorio
         public bool ActualizarCategoria(Categoria categoria)
         {
             categoria.FechaCreacion = DateTime.Now;
+            var categoriaExistente = _bd.Categoria.Find(categoria.Id);
+            if (categoriaExistente != null)
+            {
+                _bd.Entry(categoriaExistente).CurrentValues.SetValues(categoria);
+            }
+            else
+            {
+                _bd.Categoria.Update(categoria);
+            }
             _bd.Categoria.Update(categoria);
             return Guardar();
         }
