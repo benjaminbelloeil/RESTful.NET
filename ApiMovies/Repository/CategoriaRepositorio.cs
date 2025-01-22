@@ -19,9 +19,9 @@ public class CategoriaRepositorio: ICategoriaRepositorio
             return _bd.Categoria.OrderBy(c => c.Nombre).ToList();
         }
 
-        public Categoria GetCategoria(int CategoriaId)
+        public Categoria GetCategoria(int categoriaId)
         {
-            return _bd.Categoria.FirstOrDefault(c => c.Id == CategoriaId);
+            return _bd.Categoria.FirstOrDefault(c => c.Id == categoriaId);
         }
 
         public bool ExsiteCategoria(int id)

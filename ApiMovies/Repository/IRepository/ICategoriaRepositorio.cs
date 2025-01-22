@@ -5,7 +5,7 @@ namespace ApiMovies.Repository.IRepository;
 public interface ICategoriaRepositorio
 {
     ICollection<Categoria> GetCategorias();
-    Categoria GetCategoria(int CategoriaId);
+    Categoria GetCategoria(int categoriaId);
     bool ExsiteCategoria(int id);
     bool ExsiteCategoria(string nombre);
     bool CrearCategoria(Categoria categoria);
