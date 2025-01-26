@@ -60,6 +60,15 @@ public class PeliculaRepositorio: IPeliculaRepositorio
         public bool ActualizarPelicula(Pelicula pelicula)
         {
             pelicula.FechaCreacion = DateTime.Now;
+            var peliculaExistente = _bd.Pelicula.Find(pelicula.Id);
+            if (peliculaExistente != null)
+            {
+                _bd.Entry(peliculaExistente).CurrentValues.SetValues(pelicula);
+            }
+            else
+            {
+                _bd.Pelicula.Update(pelicula);
+            }
             _bd.Pelicula.Update(pelicula);
             return Guardar();
         }
