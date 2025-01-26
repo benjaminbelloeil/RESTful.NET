@@ -165,5 +165,27 @@ namespace ApiMovies.Controllers
             }
             return Ok(itemPelicula);
         }
+        
+        [HttpGet("Buscar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Buscar(string nombre)
+        {
+            try
+            {
+                var resultado = _pelRepo.BuscarPelicula(nombre);
+                if (resultado.Any())
+                {
+                    return Ok(resultado);
+                }
+                
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error al buscar el registro");
+            }
+        }
     }
 }
