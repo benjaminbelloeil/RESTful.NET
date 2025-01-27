@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 // Agregamos los Repositorios
 builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPeliculaRepositorio, PeliculaRepositorio>();
+builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
 // Agregamos el AutoMapper
 builder.Services.AddAutoMapper(typeof(MovieMappers));
