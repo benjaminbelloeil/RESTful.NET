@@ -2,6 +2,7 @@ using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
@@ -23,6 +24,7 @@ namespace ApiMovies.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        // [EnableCors("PoliticaCors")]
         public IActionResult GetCategorias()
         {
             var ListaCategorias = _ctRepo.GetCategorias();
