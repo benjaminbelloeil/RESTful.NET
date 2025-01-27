@@ -3,6 +3,7 @@ using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
@@ -23,6 +24,7 @@ namespace ApiMovies.Controllers
             this._respuestaAPI = new();
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -37,6 +39,7 @@ namespace ApiMovies.Controllers
             return Ok(listaUsuariosDto);
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpGet("{usuarioId:int}", Name = "GetUsuario")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -56,6 +59,7 @@ namespace ApiMovies.Controllers
             return Ok(itemUsuarioDto);
         }
         
+        [AllowAnonymous]
         [HttpPost("registro")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -85,6 +89,7 @@ namespace ApiMovies.Controllers
             return Ok(_respuestaAPI);
         }
         
+        [AllowAnonymous]
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

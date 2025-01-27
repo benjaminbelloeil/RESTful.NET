@@ -2,6 +2,7 @@ using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
@@ -20,6 +21,7 @@ namespace ApiMovies.Controllers
             _mapper = mapper;
         }
         
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -34,6 +36,7 @@ namespace ApiMovies.Controllers
             return Ok(ListaPeliculasDto);
         }
         
+        [AllowAnonymous]
         [HttpGet("{peliculaId:int}", Name = "GetPelicula")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,6 +56,7 @@ namespace ApiMovies.Controllers
             return Ok(itemPeliculaDto);
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(PeliculaDto))]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -88,6 +92,7 @@ namespace ApiMovies.Controllers
             return CreatedAtRoute("GetPelicula", new { peliculaId = pelicula.Id}, pelicula);
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{peliculaId:int}", Name = "ActualizarPatchPelicula")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -122,6 +127,7 @@ namespace ApiMovies.Controllers
             return NoContent();
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{peliculaId:int}", Name = "BorrarPelicula")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -146,6 +152,7 @@ namespace ApiMovies.Controllers
             return NoContent();
         }
         
+        [AllowAnonymous]
         [HttpGet("GetPeliculasEnCategoria/{categoriaId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -166,6 +173,7 @@ namespace ApiMovies.Controllers
             return Ok(itemPelicula);
         }
         
+        [AllowAnonymous]
         [HttpGet("Buscar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

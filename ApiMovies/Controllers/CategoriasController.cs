@@ -2,13 +2,15 @@ using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 
 namespace ApiMovies.Controllers
 {
-    [Route("api/[controller]")]
+    // [Authorize(Roles = "Admin")]
+    [Route("api/categorias")]
     [ApiController]
     public class CategoriasController : ControllerBase
     {
@@ -21,6 +23,7 @@ namespace ApiMovies.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -36,6 +39,7 @@ namespace ApiMovies.Controllers
             return Ok(ListaCategoriasDto);
         }
         
+        [AllowAnonymous]
         [HttpGet("{categoriaId:int}", Name = "GetCategoria")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,6 +59,7 @@ namespace ApiMovies.Controllers
             return Ok(itemCategoriaDto);
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -89,6 +94,7 @@ namespace ApiMovies.Controllers
             return CreatedAtRoute("GetCategoria", new { categoriaId = categoria.Id}, categoria);
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{categoriaId:int}", Name = "ActualizarPatchCategoria")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -123,6 +129,7 @@ namespace ApiMovies.Controllers
             return NoContent();
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpPut("{categoriaId:int}", Name = "ActualizarPutCategoria")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -158,6 +165,7 @@ namespace ApiMovies.Controllers
             return NoContent();
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{categoriaId:int}", Name = "BorrarCategoria")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
