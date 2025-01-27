@@ -11,4 +11,6 @@ public class AppDBContext: DbContext
     //Aqui pasar todas la entidades (modelos)
     public DbSet<Categoria> Categoria { get; set; }
     public DbSet<Pelicula> Pelicula { get; set; }
+    public DbSet<Usuario> Usuario { get; set; }
+    
 }
