@@ -18,7 +18,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     public UsuarioRepositorio(AppDBContext bd, IConfiguration config)
     {
         _bd = bd;
-        claveSecreta = config.GetValue<string>("ApiSettings:Secreta");
+        claveSecreta = config.GetValue<string>("AppSettings:Secreta");
     }
 
     public ICollection<Usuario> GetUsuarios()
@@ -44,6 +44,10 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto)
     {
         {
+            if (usuarioLoginDto == null || string.IsNullOrEmpty(usuarioLoginDto.NombreUsuario) || string.IsNullOrEmpty(usuarioLoginDto.Password))
+            {
+                throw new ArgumentNullException("Invalid login request. Username and password must be provided.");
+            }
             var passwordEncriptado = obtenermd5(usuarioLoginDto.Password);
             var usuario = _bd.Usuario.FirstOrDefault(u => u.NombreUsuario.ToLower() == usuarioLoginDto.NombreUsuario.ToLower() && u.Password == passwordEncriptado);
         
