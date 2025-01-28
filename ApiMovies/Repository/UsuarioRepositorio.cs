@@ -84,19 +84,19 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     
     public async Task<Usuario> Registro(UsuarioRegistroDto usuarioRegistroDto)
     {
-        var passwrodEncriptado = obtenermd5(UsuarioRegistroDto.Password);
+        var passwordEncriptado = obtenermd5(usuarioRegistroDto.Password);
 
         Usuario usuario = new Usuario()
         {
             NombreUsuario = usuarioRegistroDto.NombreUsuario,
-            Password = passwrodEncriptado,
+            Password = passwordEncriptado,
             Nombre = usuarioRegistroDto.Nombre,
             Role = usuarioRegistroDto.Role
         };
-        
+
         _bd.Usuario.Add(usuario);
         await _bd.SaveChangesAsync();
-        usuario.Password = passwrodEncriptado;
+        usuario.Password = passwordEncriptado;
         return usuario;
     }
     // Metodo para encriptar contraseña con MD5
