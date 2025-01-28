@@ -34,6 +34,7 @@ Here’s the Configure the Database section as a single block of code in markdow
 
 2. Apply migrations to set up the database:
     ```json
+    dotnet ef migrations add <MigrationName>
     dotnet ef database update
 
 ## Endpoints
