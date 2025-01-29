@@ -16,13 +16,12 @@ namespace ApiMovies.Controllers
     [Route("api/v{version:apiVersion}/categorias")] // opcion dinamica
     [ApiController]
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
-    public class CategoriasController : ControllerBase
+    public class CategoriasV1Controller : ControllerBase
     {
         private readonly ICategoriaRepositorio _ctRepo;
         private readonly IMapper _mapper;
 
-        public CategoriasController(ICategoriaRepositorio ctRepo, IMapper mapper)
+        public CategoriasV1Controller(ICategoriaRepositorio ctRepo, IMapper mapper)
         {
             _ctRepo = ctRepo;
             _mapper = mapper;
@@ -33,7 +32,7 @@ namespace ApiMovies.Controllers
         // [ResponseCache(Duration = 20)] 
         // [EnableCors("PoliticaCors")]
         // [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] 
-        [MapToApiVersion("1.0")]
+        // [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         
@@ -47,14 +46,6 @@ namespace ApiMovies.Controllers
             }
             return Ok(ListaCategoriasDto);
         }
-
-        [HttpGet]
-        [MapToApiVersion("2.0")]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2", "value3" };
-        }
-        
         
         [AllowAnonymous]
         [HttpGet("{categoriaId:int}", Name = "GetCategoria")]
