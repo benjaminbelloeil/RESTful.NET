@@ -1,6 +1,7 @@
 using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -10,8 +11,12 @@ using Microsoft.AspNetCore.Http;
 namespace ApiMovies.Controllers
 {
     // [Authorize(Roles = "Admin")]
-    [Route("api/categorias")]
+    // [ResponseCache(Duration = 20)]
+    // [EnableCors("PoliticaCors")]
+    [Route("api/v{version:apiVersion}/categorias")] // opcion dinamica
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class CategoriasController : ControllerBase
     {
         private readonly ICategoriaRepositorio _ctRepo;
@@ -25,6 +30,8 @@ namespace ApiMovies.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        // [ResponseCache(Duration = 20)] 
+        // [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] 
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         // [EnableCors("PoliticaCors")]
@@ -41,6 +48,8 @@ namespace ApiMovies.Controllers
         
         [AllowAnonymous]
         [HttpGet("{categoriaId:int}", Name = "GetCategoria")]
+        // [ResponseCache(Duration = 20)]
+        // [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

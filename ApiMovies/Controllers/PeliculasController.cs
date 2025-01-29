@@ -1,6 +1,7 @@
 using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +9,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace ApiMovies.Controllers
 {
-    [Route("api/peliculas")]
+    [Route("api/v{version:apiVersion}/peliculas")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class PeliculasController : ControllerBase
     {
         private readonly IPeliculaRepositorio _pelRepo;

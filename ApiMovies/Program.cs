@@ -3,8 +3,10 @@ using ApiMovies.Data;
 using ApiMovies.MovieMapper;
 using ApiMovies.Repository;
 using ApiMovies.Repository.IRepository;
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -14,12 +16,38 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
 
+// Soporte para cache
+builder.Services.AddResponseCaching();
+
 // Agregamos los Repositorios
 builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPeliculaRepositorio, PeliculaRepositorio>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
 var key = builder.Configuration.GetValue<string>("AppSettings:Secreta");
+
+// soporte para versionamiento
+var apiVersioningBuilder = builder.Services.AddApiVersioning(opcion =>
+{
+    opcion.AssumeDefaultVersionWhenUnspecified = true;
+    opcion.DefaultApiVersion = new ApiVersion(1, 0);
+    opcion.ReportApiVersions = true;
+    // opcion.ApiVersionReader = ApiVersionReader.Combine
+    // (
+    //     new QueryStringApiVersionReader("api-version") //?api-version=1.0
+    //     // new HeaderApiVersionReader("X-Version");
+    //     // new MediaTypeApiVersionReader("ver");
+    //         
+    // );
+});
+
+apiVersioningBuilder.AddApiExplorer(
+    opciones =>
+    {
+        opciones.GroupNameFormat = "'v'VVV";
+        opciones.SubstituteApiVersionInUrl = true;
+    }
+);
 
 // Agregamos el AutoMapper
 builder.Services.AddAutoMapper(typeof(MovieMappers));
@@ -46,7 +74,11 @@ builder.Services.AddAuthentication
     });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers();
+builder.Services.AddControllers(opcion =>
+{
+    // Cache profile. Un cache global para no tener que ponerse en todas partes.
+    opcion.CacheProfiles.Add("PorDefecto30Segundos", new CacheProfile() { Duration = 30 });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
     {
@@ -76,6 +108,24 @@ builder.Services.AddSwaggerGen(options =>
                 new List<string>()
             }
         });
+        options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1.0",
+                Title = "PeliculasApi",
+                Description = "Peliculas de ASP.NET Core Web API",
+                TermsOfService = new Uri("https://benjaminbelloeil.vercel.app/explore"),
+                Contact = new OpenApiContact
+                {
+                    Name = "Benjamin Belloeil",
+                    Url = new Uri("https://benjaminbelloeil.vercel.app/explore")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "Licensia Personal",
+                    Url = new Uri("https://benjaminbelloeil.vercel.app/explore")
+                }
+            }
+        );
     }
 );
 
@@ -102,7 +152,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(opciones =>
+{
+    opciones.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPelciulasV1");
+});
 app.MapControllers();
 
 app.UseHttpsRedirection();
