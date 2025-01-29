@@ -31,10 +31,12 @@ namespace ApiMovies.Controllers
         [AllowAnonymous]
         [HttpGet]
         // [ResponseCache(Duration = 20)] 
+        // [EnableCors("PoliticaCors")]
         // [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] 
+        [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        // [EnableCors("PoliticaCors")]
+        
         public IActionResult GetCategorias()
         {
             var ListaCategorias = _ctRepo.GetCategorias();
@@ -45,6 +47,14 @@ namespace ApiMovies.Controllers
             }
             return Ok(ListaCategoriasDto);
         }
+
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2", "value3" };
+        }
+        
         
         [AllowAnonymous]
         [HttpGet("{categoriaId:int}", Name = "GetCategoria")]

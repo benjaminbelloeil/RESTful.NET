@@ -111,7 +111,26 @@ builder.Services.AddSwaggerGen(options =>
         options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1.0",
-                Title = "PeliculasApi",
+                Title = "Peliculas API v1.0",
+                Description = "Peliculas de ASP.NET Core Web API",
+                TermsOfService = new Uri("https://benjaminbelloeil.vercel.app/explore"),
+                Contact = new OpenApiContact
+                {
+                    Name = "Benjamin Belloeil",
+                    Url = new Uri("https://benjaminbelloeil.vercel.app/explore")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "Licensia Personal",
+                    Url = new Uri("https://benjaminbelloeil.vercel.app/explore")
+                }
+            }
+        );
+        
+        options.SwaggerDoc("v2", new OpenApiInfo
+            {
+                Version = "v2.0",
+                Title = "Peliculas API v2.0",
                 Description = "Peliculas de ASP.NET Core Web API",
                 TermsOfService = new Uri("https://benjaminbelloeil.vercel.app/explore"),
                 Contact = new OpenApiContact
@@ -155,6 +174,7 @@ app.UseSwagger();
 app.UseSwaggerUI(opciones =>
 {
     opciones.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPelciulasV1");
+    opciones.SwaggerEndpoint("/swagger/v2/swagger.json", "ApiPelciulasV2");
 });
 app.MapControllers();
 
