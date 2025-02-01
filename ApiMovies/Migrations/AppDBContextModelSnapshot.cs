@@ -136,6 +136,9 @@ namespace ApiMovies.Migrations
                     b.Property<string>("RutaImagen")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RutaLocalImagen")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("categoriaId")
                         .HasColumnType("int");
 
