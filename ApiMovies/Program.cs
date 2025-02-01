@@ -172,6 +172,8 @@ if (app.Environment.IsDevelopment())
 {
     // optional dev-specific settings
 }
+// Archivos Estaticos
+app.UseStaticFiles();
 
 app.UseCors("PoliticaCors");
 app.UseAuthentication();
