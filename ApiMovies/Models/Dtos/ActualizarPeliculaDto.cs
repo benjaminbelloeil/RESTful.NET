@@ -11,7 +11,7 @@ public class ActualizarPeliculaDto
     public IFormFile Imagen { get; set; }
     public enum TipoClasificacion { Siete, Trece, Dieciseis, Diechiocho }
     public TipoClasificacion Clasificacion { get; set; }
-    public DateTime FechaCreacion { get; set; }
+    public DateTime? FechaCreacion { get; set; }
     
     public int categoriaId { get; set; }
 }

@@ -127,7 +127,7 @@ namespace ApiMovies.Migrations
                     b.Property<string>("Duracion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime?>("FechaCreacion")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")

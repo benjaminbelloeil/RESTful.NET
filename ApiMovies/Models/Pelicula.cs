@@ -14,7 +14,7 @@ public class Pelicula
     public string? RutaLocalImagen { get; set; }
     public enum TipoClasificacion { Siete, Trece, Dieciseis, Diechiocho }
     public TipoClasificacion Clasificacion { get; set; }
-    public DateTime FechaCreacion { get; set; }
+    public DateTime? FechaCreacion { get; set; }
     
     // Relacion con Categoria
     public int categoriaId { get; set; }
