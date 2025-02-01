@@ -222,18 +222,25 @@ namespace ApiMovies.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetPeliculasEnCategoria(int categoriaId)
         {
-            var listaPeliculas = _pelRepo.GetPeliculasEnCategoria(categoriaId);
-            if (listaPeliculas == null)
+            try
             {
-                return NotFound();
-            }
+                var listaPeliculas = _pelRepo.GetPeliculasEnCategoria(categoriaId);
+                if (listaPeliculas == null || !listaPeliculas.Any())
+                {
+                    return NotFound($"No se encontra las peliculas en la categoria con id: {categoriaId} ");
+                }
             
-            var itemPelicula = new List<PeliculaDto>();
-            foreach (var pelicula in listaPeliculas)
-            {
-                itemPelicula.Add(_mapper.Map<PeliculaDto>(pelicula));
+                var itemPelicula = listaPeliculas.Select(x => _mapper.Map<PeliculaDto>(x)).ToList();
+                // foreach (var pelicula in listaPeliculas)
+                // {
+                //     itemPelicula.Add(_mapper.Map<PeliculaDto>(pelicula));
+                // }
+                return Ok(itemPelicula);
             }
-            return Ok(itemPelicula);
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Se ha producido un error al intentar obtener la peliculas en categoria");
+            }
         }
         
         [AllowAnonymous]
@@ -245,13 +252,14 @@ namespace ApiMovies.Controllers.V1
         {
             try
             {
-                var resultado = _pelRepo.BuscarPelicula(nombre);
-                if (resultado.Any())
+                var peliculas = _pelRepo.BuscarPelicula(nombre);
+                if (!peliculas.Any())
                 {
-                    return Ok(resultado);
+                    return NotFound($"No se encontro peliculas que coincidan con los datos de la busqueda");
                 }
                 
-                return NotFound();
+                var peliculasDto = _mapper.Map<IEnumerable<PeliculaDto>>(peliculas);
+                return Ok(peliculasDto);
             }
             catch (Exception)
             {
