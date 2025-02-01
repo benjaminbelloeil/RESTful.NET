@@ -22,19 +22,56 @@ namespace ApiMovies.Controllers.V1
             _mapper = mapper;
         }
         
+        // V1
+        // [AllowAnonymous]
+        // [HttpGet]
+        // [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        // [ProducesResponseType(StatusCodes.Status200OK)]
+        // public IActionResult GetPeliculas()
+        // {
+        //     var ListaPeliculas = _pelRepo.GetPeliculas();
+        //     var ListaPeliculasDto = new List<PeliculaDto>();
+        //     foreach (var lista in ListaPeliculas)
+        //     {
+        //         ListaPeliculasDto.Add(_mapper.Map<PeliculaDto>(lista));
+        //     }
+        //     return Ok(ListaPeliculasDto);
+        // }
+        
+        // V2
         [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetPeliculas()
+        public IActionResult GetPeliculas([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var ListaPeliculas = _pelRepo.GetPeliculas();
-            var ListaPeliculasDto = new List<PeliculaDto>();
-            foreach (var lista in ListaPeliculas)
+            try
             {
-                ListaPeliculasDto.Add(_mapper.Map<PeliculaDto>(lista));
+                var totalPeliculas = _pelRepo.GetTotalPeliculas();
+                var peliculas = _pelRepo.GetPeliculas(pageNumber, pageSize);
+
+                if (peliculas == null || !peliculas.Any())
+                {
+                    return NotFound("No se encontraron peliculas");
+                }
+                
+                var peliculasDto = peliculas.Select(p => _mapper.Map<PeliculaDto>(p)).ToList();
+
+                var response = new
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalPeliculas / (double)pageSize),
+                    totalItems = totalPeliculas,
+                    Items = peliculasDto
+                };
+                
+                return Ok(response);
             }
-            return Ok(ListaPeliculasDto);
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error recuperando datos de la applicacion");
+            }
         }
         
         [AllowAnonymous]

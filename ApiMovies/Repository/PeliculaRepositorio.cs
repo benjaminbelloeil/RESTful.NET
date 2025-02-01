@@ -14,9 +14,24 @@ public class PeliculaRepositorio: IPeliculaRepositorio
             _bd = bd;
         }
 
-        public ICollection<Pelicula> GetPeliculas()
+        // V1
+        // public ICollection<Pelicula> GetPeliculas()
+        // {
+        //     return _bd.Pelicula.OrderBy(c => c.Nombre).ToList();
+        // }
+        
+        // V2
+        public ICollection<Pelicula> GetPeliculas(int pageNumber, int pageSize)
         {
-            return _bd.Pelicula.OrderBy(c => c.Nombre).ToList();
+            return _bd.Pelicula.OrderBy(c => c.Nombre)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public int GetTotalPeliculas()
+        {
+            return _bd.Pelicula.Count();
         }
 
         public ICollection<Pelicula> GetPeliculasEnCategoria(int catId)
