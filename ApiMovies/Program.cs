@@ -1,11 +1,13 @@
 using System.Text;
 using ApiMovies.Data;
+using ApiMovies.Models;
 using ApiMovies.MovieMapper;
 using ApiMovies.Repository;
 using ApiMovies.Repository.IRepository;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,6 +27,12 @@ builder.Services.AddScoped<IPeliculaRepositorio, PeliculaRepositorio>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
 var key = builder.Configuration.GetValue<string>("AppSettings:Secreta");
+
+// Sporte para authenticacion con .Net Identity
+
+builder.Services.AddIdentity<AppUsuario, IdentityRole>()
+    .AddEntityFrameworkStores<AppDBContext>()
+    .AddDefaultTokenProviders();
 
 // soporte para versionamiento
 var apiVersioningBuilder = builder.Services.AddApiVersioning(opcion =>

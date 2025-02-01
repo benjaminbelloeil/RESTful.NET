@@ -6,13 +6,13 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 
 namespace ApiMovies.Controllers
 {
     [Route("api/v{version:apiVersion}/usuarios")]
     [ApiController]
-    [ApiVersion("1.0")]
+    // [ApiVersion("1.0")]
+    [ApiVersionNeutral]
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioRepositorio _usRepo;

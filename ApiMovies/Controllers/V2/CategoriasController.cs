@@ -1,14 +1,9 @@
-using ApiMovies.Models;
-using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
 using Asp.Versioning;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 
-namespace ApiMovies.Controllers
+namespace ApiMovies.Controllers.V2
 {
     // [Authorize(Roles = "Admin")]
     // [ResponseCache(Duration = 20)]
@@ -16,18 +11,18 @@ namespace ApiMovies.Controllers
     [Route("api/v{version:apiVersion}/categorias")] // opcion dinamica
     [ApiController]
     [ApiVersion("2.0")]
-    public class CategoriasV2Controller : ControllerBase
+    public class CategoriasController : ControllerBase
     {
         private readonly ICategoriaRepositorio _ctRepo;
         private readonly IMapper _mapper;
 
-        public CategoriasV2Controller(ICategoriaRepositorio ctRepo, IMapper mapper)
+        public CategoriasController(ICategoriaRepositorio ctRepo, IMapper mapper)
         {
             _ctRepo = ctRepo;
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("GetString")]
         // [MapToApiVersion("2.0")]
         public IEnumerable<string> Get()
         {

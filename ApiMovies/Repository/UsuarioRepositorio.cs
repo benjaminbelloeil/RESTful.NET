@@ -6,6 +6,8 @@ using ApiMovies.Data;
 using ApiMovies.Models;
 using ApiMovies.Models.Dtos;
 using ApiMovies.Repository.IRepository;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ApiMovies.Repository;
@@ -14,11 +16,17 @@ public class UsuarioRepositorio : IUsuarioRepositorio
 {
     private readonly AppDBContext _bd;
     private string claveSecreta;
+    private readonly UserManager<AppUsuario> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IMapper _mapper;
 
-    public UsuarioRepositorio(AppDBContext bd, IConfiguration config)
+    public UsuarioRepositorio(AppDBContext bd, IConfiguration config, UserManager<AppUsuario> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper)
     {
         _bd = bd;
         claveSecreta = config.GetValue<string>("AppSettings:Secreta");
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _mapper = mapper;
     }
 
     public ICollection<Usuario> GetUsuarios()
@@ -33,7 +41,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
 
     public bool IsUniqueUser(string usuario)
     {
-        var usuarioBd = _bd.Usuario.FirstOrDefault(u => u.NombreUsuario == usuario);
+        var usuarioBd = _bd.AppUsuario.FirstOrDefault(u => u.UserName == usuario);
         if (usuarioBd == null)
         {
             return true;
@@ -48,11 +56,14 @@ public class UsuarioRepositorio : IUsuarioRepositorio
             {
                 throw new ArgumentNullException("Invalid login request. Username and password must be provided.");
             }
-            var passwordEncriptado = obtenermd5(usuarioLoginDto.Password);
-            var usuario = _bd.Usuario.FirstOrDefault(u => u.NombreUsuario.ToLower() == usuarioLoginDto.NombreUsuario.ToLower() && u.Password == passwordEncriptado);
+            // var passwordEncriptado = obtenermd5(usuarioLoginDto.Password);
+            var usuario = _bd.AppUsuario.FirstOrDefault(
+                    u => u.UserName.ToLower() == usuarioLoginDto.NombreUsuario.ToLower());
+            
+            bool isValid = await _userManager.CheckPasswordAsync(usuario, usuarioLoginDto.Password);
         
             // Validamos si el usuario no existe con la combinacion de usuario y contraseña
-            if (usuario == null)
+            if (usuario == null || isValid == false)
             {
                 return new UsuarioLoginRespuestaDto()
                 {
@@ -62,6 +73,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
             
             }
             // aqui existe el usuario entonces podemos procesar el login
+            var roles = await _userManager.GetRolesAsync(usuario);
             var manejadorToken = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(claveSecreta);
 
@@ -69,8 +81,8 @@ public class UsuarioRepositorio : IUsuarioRepositorio
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.NombreUsuario.ToString()),
-                    new Claim(ClaimTypes.Role, usuario.Role)
+                    new Claim(ClaimTypes.Name, usuario.UserName.ToString()),
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -80,38 +92,54 @@ public class UsuarioRepositorio : IUsuarioRepositorio
             UsuarioLoginRespuestaDto usuarioLoginRespuestaDto = new UsuarioLoginRespuestaDto()
             {
                 Token = manejadorToken.WriteToken(token),
-                Usuario = usuario
+                Usuario = _mapper.Map<UsuarioDatosDto>(usuario),
             };
             return usuarioLoginRespuestaDto;
         }
     }
     
-    public async Task<Usuario> Registro(UsuarioRegistroDto usuarioRegistroDto)
+    public async Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto)
     {
-        var passwordEncriptado = obtenermd5(usuarioRegistroDto.Password);
+        // var passwordEncriptado = obtenermd5(usuarioRegistroDto.Password);
 
-        Usuario usuario = new Usuario()
+        AppUsuario usuario = new AppUsuario()
         {
-            NombreUsuario = usuarioRegistroDto.NombreUsuario,
-            Password = passwordEncriptado,
+            UserName = usuarioRegistroDto.NombreUsuario,
+            Email = usuarioRegistroDto.NombreUsuario,
+            NormalizedEmail = usuarioRegistroDto.NombreUsuario.ToUpper(),
             Nombre = usuarioRegistroDto.Nombre,
-            Role = usuarioRegistroDto.Role
         };
+        
+        var result = await _userManager.CreateAsync(usuario, usuarioRegistroDto.Password);
 
-        _bd.Usuario.Add(usuario);
-        await _bd.SaveChangesAsync();
-        usuario.Password = passwordEncriptado;
-        return usuario;
+        if (result.Succeeded)
+        {
+            if (!_roleManager.RoleExistsAsync("Admin").GetAwaiter().GetResult())
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                await _roleManager.CreateAsync(new IdentityRole("Registrado"));
+            }
+            
+            await _userManager.AddToRoleAsync(usuario, "Admin");
+            var usuarioRetornado = _bd.AppUsuario.FirstOrDefault(u => u.UserName == usuarioRegistroDto.NombreUsuario);
+            
+            return _mapper.Map<UsuarioDatosDto>(usuarioRetornado);
+        }
+
+        // _bd.Usuario.Add(usuario);
+        // await _bd.SaveChangesAsync();
+        // usuario.Password = passwordEncriptado;
+        return new UsuarioDatosDto();
     }
     // Metodo para encriptar contraseña con MD5
-    public static string obtenermd5(string valor)
-    {
-        MD5CryptoServiceProvider x = new MD5CryptoServiceProvider();
-        byte[] data = System.Text.Encoding.UTF8.GetBytes(valor);
-        data = x.ComputeHash(data);
-        string resp = "";
-        for (int i = 0; i < data.Length; i++)
-            resp += data[i].ToString("x2").ToLower();
-        return resp;
-    }
+    // public static string obtenermd5(string valor)
+    // {
+    //     MD5CryptoServiceProvider x = new MD5CryptoServiceProvider();
+    //     byte[] data = System.Text.Encoding.UTF8.GetBytes(valor);
+    //     data = x.ComputeHash(data);
+    //     string resp = "";
+    //     for (int i = 0; i < data.Length; i++)
+    //         resp += data[i].ToString("x2").ToLower();
+    //     return resp;
+    
 }

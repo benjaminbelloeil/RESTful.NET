@@ -5,9 +5,8 @@ using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 
-namespace ApiMovies.Controllers
+namespace ApiMovies.Controllers.V1
 {
     [Route("api/v{version:apiVersion}/peliculas")]
     [ApiController]
