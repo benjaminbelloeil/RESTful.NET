@@ -29,14 +29,14 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         _mapper = mapper;
     }
 
-    public ICollection<Usuario> GetUsuarios()
+    public ICollection<AppUsuario> GetUsuarios()
     {
-        return _bd.Usuario.OrderBy(c => c.NombreUsuario).ToList();
+        return _bd.AppUsuario.OrderBy(c => c.UserName).ToList();
     }
 
-    public Usuario GetUsuario(int usuarioId)
+    public AppUsuario GetUsuario(string usuarioId)
     {
-        return _bd.Usuario.FirstOrDefault(u => u.Id == usuarioId);
+        return _bd.AppUsuario.FirstOrDefault(u => u.Id == usuarioId);
     }
 
     public bool IsUniqueUser(string usuario)

@@ -31,8 +31,7 @@ var key = builder.Configuration.GetValue<string>("AppSettings:Secreta");
 // Sporte para authenticacion con .Net Identity
 
 builder.Services.AddIdentity<AppUsuario, IdentityRole>()
-    .AddEntityFrameworkStores<AppDBContext>()
-    .AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<AppDBContext>();
 
 // soporte para versionamiento
 var apiVersioningBuilder = builder.Services.AddApiVersioning(opcion =>
