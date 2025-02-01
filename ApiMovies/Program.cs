@@ -180,11 +180,25 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSwagger();
-app.UseSwaggerUI(opciones =>
+if (app.Environment.IsDevelopment())
 {
-    opciones.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPelciulasV1");
-    opciones.SwaggerEndpoint("/swagger/v2/swagger.json", "ApiPelciulasV2");
-});
+    app.UseSwaggerUI(opciones =>
+    {
+        opciones.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPelciulasV1");
+        opciones.SwaggerEndpoint("/swagger/v2/swagger.json", "ApiPelciulasV2");
+    });
+}
+else
+{
+    app.UseSwaggerUI(opciones =>
+    {
+        opciones.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPelciulasV1");
+        opciones.SwaggerEndpoint("/swagger/v2/swagger.json", "ApiPelciulasV2");
+        opciones.RoutePrefix = "";
+    });
+}
+
+
 app.MapControllers();
 
 app.UseHttpsRedirection();
